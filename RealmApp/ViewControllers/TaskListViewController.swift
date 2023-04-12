@@ -52,7 +52,7 @@ class TaskListViewController: UITableViewController {
         let taskList = taskLists[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            StorageManager.shared.delete(taskList)
+            StorageManager.shared.deleteTaskList(taskList)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
@@ -116,7 +116,7 @@ extension TaskListViewController {
         
         alert.action(with: taskList) { [weak self] newValue in
             if let taskList = taskList, let completion = completion {
-                StorageManager.shared.edit(taskList, newValue: newValue)
+                StorageManager.shared.editTaskList(taskList, newValue: newValue)
                 completion()
             } else {
                 self?.save(taskList: newValue)
