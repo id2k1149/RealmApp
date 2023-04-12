@@ -54,12 +54,13 @@ class TasksViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
         let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
         
-        
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            StorageManager.shared.deleteTask(task)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+        let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
+            StorageManager.shared.done(single: task)
+            tableView.reloadData()
+            isDone(true)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -69,21 +70,17 @@ class TasksViewController: UITableViewController {
             isDone(true)
         }
         
-//        let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
-//            StorageManager.shared.done(task)
-//            tableView.reloadRows(at: [indexPath], with: .automatic)
-//            isDone(true)
-//        }
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+            StorageManager.shared.delete(single: task)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
         
         editAction.backgroundColor = .orange
-//        doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         
-//        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
         
-        return UISwipeActionsConfiguration(actions: [editAction, deleteAction])
     }
-    
-    
     
     @objc private func addButtonPressed() {
         showAlert()
@@ -99,9 +96,9 @@ extension TasksViewController {
         
         alert.action(with: task) { [weak self] taskTitle, note in
             if let task = task, let completion = completion {
-                StorageManager.shared.editTask(task,
-                                               newName: taskTitle,
-                                               newNote: note)
+                StorageManager.shared.edit(single: task,
+                                           newName: taskTitle,
+                                           newNote: note)
                 completion()
             } else {
                 self?.save(task: taskTitle, withNote: note)
