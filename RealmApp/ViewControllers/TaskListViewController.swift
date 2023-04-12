@@ -84,6 +84,17 @@ class TaskListViewController: UITableViewController {
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
+        var sortedTaskLists: Results<TaskList>
+        
+        switch sender.selectedSegmentIndex {
+        case 0:
+            sortedTaskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPath: "date", ascending: true)
+        default:
+            sortedTaskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPath: "name", ascending: true)
+        }
+        
+        taskLists = sortedTaskLists
+        tableView.reloadData()
     }
     
     @objc private func addButtonPressed() {
