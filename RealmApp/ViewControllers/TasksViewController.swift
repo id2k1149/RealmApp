@@ -58,15 +58,15 @@ class TasksViewController: UITableViewController {
         let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
-            StorageManager.shared.done(single: task, isDone: true)
+            StorageManager.shared.done(single: task, isCompleted: true)
             tableView.reloadData()
             isDone(true)
         }
         
         let undoneAction = UIContextualAction(style: .normal, title: "Undone") { _, _, isDone in
-            StorageManager.shared.done(single: task, isDone: false)
+            StorageManager.shared.done(single: task, isCompleted: false)
             tableView.reloadData()
-            isDone(false)
+            isDone(true)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -91,9 +91,6 @@ class TasksViewController: UITableViewController {
         else {
             return UISwipeActionsConfiguration(actions: [undoneAction, editAction, deleteAction])
         }
-        
-        
-        
     }
     
     @objc private func addButtonPressed() {
