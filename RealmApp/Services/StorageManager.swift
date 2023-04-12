@@ -62,9 +62,18 @@ class StorageManager {
         }
     }
     
-    func done(single task: Task) {
-        write {
-            task.setValue(true, forKey: "isComplete")
+    func done(single task: Task, isDone: Bool) {
+        if isDone {
+            write {
+                task.setValue(true, forKey: "isComplete")
+            }
+            
+        }
+        else {
+            write {
+                task.setValue(false, forKey: "isComplete")
+            }
+            
         }
     }
 

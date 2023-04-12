@@ -58,9 +58,15 @@ class TasksViewController: UITableViewController {
         let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
-            StorageManager.shared.done(single: task)
+            StorageManager.shared.done(single: task, isDone: true)
             tableView.reloadData()
             isDone(true)
+        }
+        
+        let undoneAction = UIContextualAction(style: .normal, title: "Undone") { _, _, isDone in
+            StorageManager.shared.done(single: task, isDone: false)
+            tableView.reloadData()
+            isDone(false)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -77,8 +83,16 @@ class TasksViewController: UITableViewController {
         
         editAction.backgroundColor = .orange
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+        undoneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         
-        return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+        if indexPath.section == 0 {
+            return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+        }
+        else {
+            return UISwipeActionsConfiguration(actions: [undoneAction, editAction, deleteAction])
+        }
+        
+        
         
     }
     
