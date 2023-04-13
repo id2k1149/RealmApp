@@ -42,14 +42,7 @@ class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.name
-        if taskList.tasks.count == 0 {
-            content.secondaryText = "0"
-        }
-        else if taskList.tasks.filter("isComplete = false").count > 0 {
-            content.secondaryText = "\(taskList.tasks.filter("isComplete = false").count)"
-        } else {
-            content.secondaryText = "✅"
-        }
+        content.secondaryText = getSecondaryText(for: taskList)
         cell.contentConfiguration = content
         return cell
     }
@@ -93,11 +86,11 @@ class TaskListViewController: UITableViewController {
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         var sortedTaskLists: Results<TaskList>
         
-        switch sender.selectedSegmentIndex {
-        case 0:
-            sortedTaskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPath: "date", ascending: true)
-        default:
-            sortedTaskLists = StorageManager.shared.realm.objects(TaskList.self).sorted(byKeyPath: "name", ascending: true)
+        if sender.selectedSegmentIndex == 0 {
+            sortedTaskLists = taskLists.sorted(byKeyPath: "date")
+        }
+        else {
+            sortedTaskLists = taskLists.sorted(byKeyPath: "name")
         }
         
         taskLists = sortedTaskLists
@@ -111,6 +104,17 @@ class TaskListViewController: UITableViewController {
     private func createTempData() {
         DataManager.shared.createTempData { [unowned self] in
             tableView.reloadData()
+        }
+    }
+    
+    private func getSecondaryText(for taskList: TaskList) -> String {
+        if taskList.tasks.count == 0 {
+            return "0"
+        }
+        else if taskList.tasks.filter("isComplete = false").count > 0 {
+            return "\(taskList.tasks.filter("isComplete = false").count)"
+        } else {
+            return "✅"
         }
     }
 }
